@@ -266,7 +266,7 @@ export default class SettingTab extends PluginSettingTab {
                         this.plugin.settings.ExcludedFoldersList = value;
                         this.plugin.settings.ExcludedFoldersListRegexp = regexconverted;
                         await this.plugin.saveSettings();
-                        console.log("Excluded folders regex:", regexconverted);
+                        logError("Excluded folders regex:" + regexconverted);
                     }
             
                     });

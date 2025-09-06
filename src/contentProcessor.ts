@@ -12,7 +12,7 @@ import {
   isUrl,
   downloadImage,
   readFromDisk,
-  cleanFileName,
+  cFileName,
   logError,
   trimAny,
   pathJoin,
@@ -110,20 +110,13 @@ export function imageTagProcessor(app: Plugin,
      
     let fileExt = await getFileExt(fileData, parsedUrl.pathname);
    
-
  
     if (fileExt == "png" && settings.PngToJpeg) {
  
 
-      let compType = "image/jpeg";
-   
-      if (settings.ImgCompressionType == "image/webp") {
-         compType = "image/webp";
-      }
-
+      let compType = (settings.ImgCompressionType == "") ? "image/jpeg": settings.ImgCompressionType;
       const blob = new Blob([new Uint8Array(fileData)]);
       fileData = await blobToJpegArrayBuffer(blob, settings.JpegQuality*0.01, compType)
-
       logError("arbuf: ")
       logError(fileData)
     }
@@ -213,8 +206,7 @@ export function imageTagProcessor(app: Plugin,
  
 
 
-export async function getRDir(
-                              noteFile: TFile,
+export async function getRDir(noteFile: TFile,
                               settings: ISettings,
                               fileName: string,
                               link: string = undefined):
@@ -239,7 +231,7 @@ export async function getRDir(
       pathWiki = pathMd = parsedPathE["basen"];
       break;
     case "onlyRelative":
-      pathWiki =  pathJoin([path.relative(path.sep + notePath, path.sep + parsedPath["dir"]),parsedPathE["basen"]]);
+      pathWiki = pathJoin([path.relative(path.sep + notePath, path.sep + parsedPath["dir"]),parsedPathE["basen"]]);
       pathMd = encodeURI(pathWiki);
       break;
     case "fullDirPath":
@@ -270,10 +262,7 @@ export async function getMDir(app: App,
     var attdir = settings.saveAttE;
     if (defaultdir) { attdir  = ""};
     let root="/";
-
-
-
-
+ 
           switch (attdir) {
             
             case 'inFolderBelow':
@@ -351,7 +340,7 @@ async function chooseFileName(
 
   let needWrite = true;
   let fileName = "";
-  const suggestedName = pathJoin([dir, cleanFileName(`${baseName}`+`.${fileExt}`)]);
+  const suggestedName = pathJoin([dir, cFileName(`${baseName}`+`.${fileExt}`)]);
     if (await adapter.exists(suggestedName, false)) {
       const fileData = await adapter.readBinary(suggestedName);
             const existing_file_md5 = md5Sig(fileData);
@@ -360,7 +349,7 @@ async function chooseFileName(
               needWrite = false;
             }
             else{
-              fileName =  pathJoin([dir, cleanFileName( Math.random().toString(9).slice(2,) +`.${fileExt}`)]);
+              fileName =  pathJoin([dir, cFileName(Math.random().toString(9).slice(2,) +`.${fileExt}`)]);
             }
 
     } else {

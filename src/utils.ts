@@ -7,8 +7,6 @@ const fs2 = require('fs').promises;
 import fs from "fs";
  
  
- 
-
 import {
   FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
   MD_LINK,
@@ -28,9 +26,6 @@ import {
 
 //import { TIMEOUT } from "dns";
 //import fs from "fs";
-
-
-
 
 
 /*
@@ -232,7 +227,6 @@ export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
 export async function readFromDiskB(file: string, count: number = undefined): Promise<Buffer> {
 
   try {
-
     const buffer = Buffer.alloc(count);
     const fd: number = fs.openSync(file, "r+")
     fs.readSync(fd, buffer, 0, buffer.length, 0)
@@ -278,7 +272,6 @@ export async function downloadImage(url: string): Promise<ArrayBuffer> {
     return res.arrayBuffer;
   }
   catch (e) {
-
     logError("Cannot download the file: " + e, false);
     return null;
   }
@@ -328,22 +321,14 @@ export function trimAny(str: string, chars: Array<string>) {
 }
 
 
-export function cFileName(name: string) {
+export function cFileName(name: string, sep:string = " ") {
   const cleanedName = name.replace(
     /(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g,
-    " "
+    sep
   );
   return cleanedName;
 }
-
-export function cleanFileName(name: string) {
-  const cleanedName = filenamify(name).replace(
-    FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
-    "_"
-  );
-  return cleanedName;
-}
-
+ 
 export function pathJoin(parts: Array<string>): string {
   const result = path.join(...parts);
   // it seems that obsidian do not understand paths with backslashes in Windows, so turn them into forward slashes
@@ -352,7 +337,6 @@ export function pathJoin(parts: Array<string>): string {
 
 export function normalizePath(path: string) {
   return path.replace(/\\/g, "/");
-
 }
 
 export function encObsURI(e: string) {
