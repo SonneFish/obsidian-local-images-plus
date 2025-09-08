@@ -11,7 +11,6 @@ function setDebug(value: boolean = false){
     VERBOSE =  value;
 }
 
-
 export {VERBOSE, setDebug};
 
 
@@ -19,12 +18,10 @@ export {VERBOSE, setDebug};
 
 export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"};
 
-export const USER_AGENT =
-'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82  Safari/537.36';
+export const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82  Safari/537.36';
 
-export const HTML_EMBED =
 //html embedded image
-/(?<htmlem>\[{0,1}\<img.+?(?<src>src=.+?)\>)/gm
+export const HTML_EMBED = /(?<htmlem>\[{0,1}\<img.+?(?<src>src=.+?)\>)/gm
 
 export const ANCHOR_S = /(?<anchor>.+)\|(?<size>[0-9]+)/g
 
@@ -43,17 +40,19 @@ export const MD_SEARCH_PATTERN =
 ]
 
 
-export const MD_LINK = 
-/\http(s){0,1}.+?( {1}|\)\n)/g;
+export const FRONTMATTER_SEARCH_PATTERN =
+[
+///\[\[(?<link>((http(s){0,1}).+?(\) |\..{3,4}|\]\]|\]\]$|\]\]\n)))/gm,
+/\[{2}(?<loclink>(.+?(\) |\..{3,4}\]{2}|\]{2}|\]{2}$|\]{2}\n)))/i,
+]
 
+export const MD_LINK = /\http(s){0,1}.+?( {1}|\)\n)/g;
 
-export const ANY_URL_PATTERN =
-/[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
+export const ANY_URL_PATTERN = /[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
 
-export const ATT_SIZE_ACHOR = 
-/(^(?<attdesc>.{1,})\|(?<attsize>[0-9]{2,4})$)|(?<attsize2>^[0-9]{2,4}$)/gm
+export const ATT_SIZE_ACHOR = /(^(?<attdesc>.{1,})\|(?<attsize>[0-9]{2,4})$)|(?<attsize2>^[0-9]{2,4}$)/gm
 
-
+export const TIME_DIFF = 500;
 
 // Looks like timeouts in Obsidian API are set in milliseconds
 export const NOTICE_TIMEOUT = 5 * 1000;

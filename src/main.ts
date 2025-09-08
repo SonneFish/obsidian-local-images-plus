@@ -14,6 +14,7 @@ import {
   imageTagProcessor,
   getMDir,
   getRDir,
+  FrontMatterParser,
 } from "./contentProcessor"
 
 import {
@@ -38,12 +39,14 @@ import {
   MD_SEARCH_PATTERN,
   NOTICE_TIMEOUT,
   TIMEOUT_LIKE_INFINITY,
-
+  FRONTMATTER_SEARCH_PATTERN,
+  TIME_DIFF
 } from "./config"
 
 import { UniqueQueue } from "./uniqueQueue"
 import path from "path"
 import { ModalW1 } from "./modal"
+import { isNull } from "util"
 const fs = require('fs').promises;
 
 
@@ -472,9 +475,7 @@ export default class LocalImagesPlugin extends Plugin {
 
 
 
-  private removeOrphans = (type: string = undefined,
-    filesToRemove: Array<TFile> = undefined,
-    noteFile: TFile = undefined) => async () => {
+  private removeOrphans = (type: string = undefined, filesToRemove: Array<TFile> = undefined, noteFile: TFile = undefined) => async () => {
 
       const obsmediadir = app.vault.getConfig("attachmentFolderPath")
       const allFiles = this.app.vault.getFiles()
@@ -512,7 +513,15 @@ export default class LocalImagesPlugin extends Plugin {
           const metaCache = this.app.metadataCache.getFileCache(noteFile)
           const embeds = metaCache?.embeds
           const links = metaCache?.links
-
+          const frembeds = await FrontMatterParser(this, noteFile, FRONTMATTER_SEARCH_PATTERN);
+ 
+ 
+          if (frembeds.files?.length > 0) {
+            for (const frembed of frembeds.files) {
+              allAttachmentsLinks.push(frembed.link);
+              console.log(frembed.link);
+            }
+          }
           if (embeds) {
             for (const embed of embeds) {
               allAttachmentsLinks.push(path.basename(embed.link))
@@ -598,7 +607,7 @@ export default class LocalImagesPlugin extends Plugin {
                     logError("text json")
                    
                     //https://github.com/Fevol/obsidian-typings
-                    //Undocumented API may be altered in the future
+                    //Undocumented API, may be altered in the future
                     const AllNodeLinks = (await this.app.internalPlugins.plugins.canvas.instance.index.parseText(node.text))?.links;
  
                     logError(AllNodeLinks)
@@ -729,7 +738,7 @@ export default class LocalImagesPlugin extends Plugin {
 
     const timeGapMs = Math.abs(Date.now() - file.stat.ctime)
 
-    if (timeGapMs > 1000)
+    if (timeGapMs > TIME_DIFF)
       return
 
     logError("func onMdCreateFunc: " + file.path)
@@ -761,7 +770,7 @@ export default class LocalImagesPlugin extends Plugin {
 
     const timeGapMs = Math.abs(Date.now() - file.stat.mtime)
 
-    if (timeGapMs > 1000)
+    if (timeGapMs > TIME_DIFF)
       return
 
     this.newfCreated.push(file.path)
