@@ -385,6 +385,18 @@ export default class SettingTab extends PluginSettingTab {
                     })
             )
 
+        new Setting(containerEl)
+            .setName("Add original link as comment")
+            .setDesc("Add the original image URL as an HTML comment after the downloaded image.")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.addOriginalLink)
+                    .onChange(async (value) => {
+                        this.plugin.settings.addOriginalLink = value
+                        await this.plugin.saveSettings()
+                    })
+            )
+
 
 
 

@@ -6,6 +6,7 @@ import execute from "rollup-plugin-execute";
 import path from "path";
 
 const isProd = process.env.BUILD === "production";
+const isMacOS = process.platform === "darwin";
 
 const currentDir = path.dirname(__filename);
 
@@ -29,8 +30,8 @@ export default {
   plugins: [
     execute([
       ` mkdir -p ${currentDir}/obsidian_local_images_plus_latest`,
-      ` cp -u ${currentDir}/manifest.json ${currentDir}/obsidian_local_images_plus_latest/manifest.json`,
-      ` cp -u ${currentDir}/styles.css ${currentDir}/obsidian_local_images_plus_latest/styles.css`,
+      ` cp ${isMacOS ? "" : "-u"} ${currentDir}/manifest.json ${currentDir}/obsidian_local_images_plus_latest/manifest.json`,
+      ` cp ${isMacOS ? "" : "-u"} ${currentDir}/styles.css ${currentDir}/obsidian_local_images_plus_latest/styles.css`,
     ]),
     typescript(),
     nodeResolve({ browser: true }),

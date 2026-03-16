@@ -162,6 +162,11 @@ export function imageTagProcessor(app: Plugin,
             }
           }
 
+          let originalLinkComment = "";
+          if (settings.addOriginalLink && (protocol === "http:" || protocol === "https")) {
+            originalLinkComment = "<!-- !delete_me[" + anchor + "](" + link + ")  -->";
+          }
+
           if (!app.app.vault.getConfig("useMarkdownLinks")) {
 
             // image caption
@@ -170,12 +175,12 @@ export function imageTagProcessor(app: Plugin,
             // image size has higher priority
             (!settings.useCaptions || !imgsize.length) ? caption = "" : caption = "\|" + imgsize;
 
-            return [match, `![[${pathWiki}${caption}]]`, `${shortName}`];
+            return [match, `![[${pathWiki}${caption}]]`, `${shortName}${originalLinkComment}`];
           }
 
           else {
             (!settings.useCaptions || !caption.length) ? caption = "" : caption = " " + caption;
-            return [match, `![${anchor}](${pathMd}${caption})`, `${shortName}`];
+            return [match, `![${anchor}](${pathMd}${caption})`, `${shortName}${originalLinkComment}`];
           }
 
 
